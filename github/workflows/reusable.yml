@@ -1,0 +1,31 @@
+on:
+  workflow_call:
+    inputs:
+      repo_path:
+        default: 'prefix-dir'
+        type: string
+
+# DOES NOT WORK: use of ${{inputs.repo_path}} here
+# defaults:
+#   run:
+#     working-directory: ${{inputs.repo_path}}
+
+jobs:
+  echo:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: "${inputs.repo_path#prefix}"
+    steps:
+      # use checkout to grab the new working directory "dir" before any "run" commands are used
+      - uses: actions/checkout@v4
+      # do something
+      - run: echo "I am a reusable workflow"
+#      # upload artifact
+#      - run: echo "Artifact from a reusable workflow!" > reusable.txt
+#      - uses: actions/upload-artifact@v4
+#        with:
+#          name: reusable-artifact
+#          path: reusable.txt
+      # show current working directory
+      - run: pwd
